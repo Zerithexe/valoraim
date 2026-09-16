@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RANGE // Valorant Nişan Antrenörü</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark"></span>
+    <h1>RANGE</h1>
+    <p class="brand-sub">Valorant için nişan antrenmanı</p>
+  </div>
+
+  <nav class="modes" id="modes" aria-label="Antrenman modu">
+    <button class="mode is-active" data-mode="gridshot">Gridshot</button>
+    <button class="mode" data-mode="flick">Flick</button>
+    <button class="mode" data-mode="tracking">Tracking</button>
+  </nav>
+</header>
+
+<main class="layout">
+
+  <!-- ARENA -->
+  <section class="arena-wrap">
+    <div class="hud">
+      <div class="hud-cell"><span>Süre</span><b id="hudTime">60.0</b></div>
+      <div class="hud-cell"><span>Skor</span><b id="hudScore">0</b></div>
+      <div class="hud-cell"><span>İsabet</span><b id="hudAcc">—</b></div>
+      <div class="hud-cell" id="hudExtraCell"><span id="hudExtraLabel">Hız</span><b id="hudExtra">—</b></div>
+    </div>
+
+    <div class="arena" id="arena" tabindex="0">
+      <div class="crosshair" id="crosshair" hidden>
+        <span class="ch-h"></span><span class="ch-v"></span><span class="ch-dot"></span>
+      </div>
+
+      <div class="overlay" id="overlay">
+        <h2 id="overlayTitle">Başlamaya hazır</h2>
+        <p id="overlayText">Alana tıkla, fare kilitlensin. Hedefleri sol tık ile vur. Çıkmak için Esc.</p>
+        <button class="btn-primary" id="startBtn">Antrenmanı başlat</button>
+        <p class="overlay-hint">Kısayol: <kbd>Boşluk</kbd> başlat / yeniden dene · <kbd>Esc</kbd> duraklat</p>
+      </div>
+    </div>
+
+    <p class="arena-foot" id="arenaFoot">Mod: Gridshot — aynı anda 3 hedef. Biri patlayınca yenisi doğar.</p>
+  </section>
+
+  <!-- AYARLAR -->
+  <aside class="panel">
+    <h2 class="panel-title">Ayarlar</h2>
+
+    <div class="field">
+      <label for="sens">Oyun içi hassasiyet <output id="sensOut">0.40</output></label>
+      <input type="range" id="sens" min="0.05" max="2" step="0.01" value="0.40" />
+      <p class="note">Valorant ayarlarındaki değerin aynısını gir. Buradaki nişangâh da aynı formülle hareket eder.</p>
+    </div>
+
+    <div class="field">
+      <label for="dpi">Fare DPI <output id="dpiOut">800</output></label>
+      <input type="range" id="dpi" min="100" max="3200" step="50" value="800" />
+    </div>
+
+    <div class="readout">
+      <div><span>eDPI</span><b id="edpi">320</b></div>
+      <div><span>cm/360°</span><b id="cm360">40.9</b></div>
+      <div><span>360° için</span><b id="counts">12857 sayım</b></div>
+    </div>
+    <p class="note">eDPI = DPI × hassasiyet. Profesyonellerin çoğu 200–400 eDPI (yaklaşık 30–45 cm/360) aralığında oynuyor. Düşük eDPI = daha stabil mikro nişan, yüksek eDPI = daha hızlı dönüş.</p>
+
+    <hr class="rule" />
+
+    <div class="field">
+      <label for="size">Hedef boyutu <output id="sizeOut">44 px</output></label>
+      <input type="range" id="size" min="16" max="90" step="2" value="44" />
+      <p class="note">Küçült = zorlaş. 5 seansta bir 2 px küçültmek, aynı boyutta 50 seans yapmaktan daha çok geliştirir.</p>
+    </div>
+
+    <div class="field">
+      <label for="duration">Seans süresi <output id="durationOut">60 sn</output></label>
+      <input type="range" id="duration" min="15" max="180" step="15" value="60" />
+    </div>
+
+    <div class="field" id="countField">
+      <label for="count">Aynı anda hedef <output id="countOut">3</output></label>
+      <input type="range" id="count" min="1" max="6" step="1" value="3" />
+    </div>
+
+    <div class="field" id="speedField" hidden>
+      <label for="speed">Hedef hızı <output id="speedOut">240 px/sn</output></label>
+      <input type="range" id="speed" min="80" max="600" step="20" value="240" />
+    </div>
+
+    <label class="check"><input type="checkbox" id="sound" checked /> Vuruş sesi</label>
+    <label class="check"><input type="checkbox" id="punish" /> Iskada skor düşsün</label>
+
+    <button class="btn-ghost" id="resetBest">Rekorları sıfırla</button>
+
+    <div class="best">
+      <h3>Rekorların</h3>
+      <ul id="bestList"><li>Henüz kayıt yok.</li></ul>
+    </div>
+  </aside>
+</main>
+
+<!-- NOTLAR -->
+<section class="notes">
+  <h2>Antrenman notları</h2>
+
+  <article>
+    <h3>Hassasiyeti nasıl seçmeli</h3>
+    <p>Tek doğru değer yok, ama tutarlılık her şeydir. Bir hafta boyunca aynı eDPI ile oyna; kas hafızası ancak sabit bir değerle oturur. Sık sık sıyırıyorsan (hedefin biraz sağına/soluna) hassasiyet muhtemelen yüksek, hedefe varamadan duruyorsan düşük.</p>
+  </article>
+
+  <article>
+    <h3>Gridshot — hız ve geçiş</h3>
+    <p>Hedeften hedefe geçişi çalıştırır. Amaç sadece hızlı tıklamak değil: her tıklamadan sonra nişangâhı durdurabilmek. İsabet oranın %80'in altına düşüyorsa yavaşla, %95'i geçiyorsa hızlan.</p>
+  </article>
+
+  <article>
+    <h3>Flick — ani çevirme</h3>
+    <p>Hedef doğduğu anda tek hamlede üstüne git. Tepki süresinden çok "ilk hamlede isabet" önemli. Düzeltme yapmak zorunda kalıyorsan hamleyi kısa tut, sonra bileğinle mikro düzelt.</p>
+  </article>
+
+  <article>
+    <h3>Tracking — takip</h3>
+    <p>Sol tuşu basılı tut, nişangâhı hedefin üstünde tut. Vandal/Phantom ile ilk mermiden sonraki kontrol ve Odin/Spectre kullanımı buradan gelir. Kol değil, geniş hareketlerde kol + ince düzeltmede bilek karışımı çalışır.</p>
+  </article>
+
+  <article>
+    <h3>Süre yerine kalite</h3>
+    <p>Günde 10–15 dakika ısınma yeterli. Yorgunken yapılan antrenman kötü alışkanlık öğretir; isabet oranın seans içinde düşmeye başladığında bırak.</p>
+  </article>
+
+  <article>
+    <h3>Crosshair yüksekliği</h3>
+    <p>Bu sitede hedefler ekrana rastgele dağılır, oyunda ise düşman kafası çoğunlukla belli bir yükseklikte olur. Antrenmandan sonra Valorant'ta Range'e girip 10 bot vurmak, ölçeği beynine geri oturtur.</p>
+  </article>
+</section>
+
+<footer class="foot">
+  <p>Tamamen tarayıcıda çalışır. Rekorlar yalnızca bu cihazda saklanır. Riot Games ile bağlantısı yoktur.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
